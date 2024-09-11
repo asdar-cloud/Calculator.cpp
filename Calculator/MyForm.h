@@ -754,6 +754,7 @@ private: System::Void equal_Click(System::Object^ sender, System::EventArgs^ e)
 		if (!this->CalcPanel->Text->Contains(","))
 			this->CalcPanel->Text +=  ",";
 	}
+		   //for test
 };
 	
 }
