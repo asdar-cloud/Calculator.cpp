@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <cmath>
+#include <string>
 
 namespace Calculator {
 
@@ -89,6 +91,8 @@ namespace Calculator {
 	private: float first_num;
 	private: char user_action{ ' ' };
 	private: bool is_equal{ false };
+	private: System::Windows::Forms::Label^ act;
+
 	protected:
 
 
@@ -146,6 +150,7 @@ namespace Calculator {
 			this->button15 = (gcnew System::Windows::Forms::Button());
 			this->button22 = (gcnew System::Windows::Forms::Button());
 			this->button23 = (gcnew System::Windows::Forms::Button());
+			this->act = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->SuspendLayout();
@@ -249,6 +254,7 @@ namespace Calculator {
 			this->degree->TabIndex = 31;
 			this->degree->Text = L"^";
 			this->degree->UseVisualStyleBackColor = false;
+			this->degree->Click += gcnew System::EventHandler(this, &MyForm::degree_Click);
 			// 
 			// PlusMinus
 			// 
@@ -289,6 +295,7 @@ namespace Calculator {
 			this->constE->TabIndex = 34;
 			this->constE->Text = L"e";
 			this->constE->UseVisualStyleBackColor = false;
+			this->constE->Click += gcnew System::EventHandler(this, &MyForm::constE_Click);
 			// 
 			// constP
 			// 
@@ -302,6 +309,7 @@ namespace Calculator {
 			this->constP->TabIndex = 35;
 			this->constP->Text = L"π";
 			this->constP->UseVisualStyleBackColor = false;
+			this->constP->Click += gcnew System::EventHandler(this, &MyForm::constP_Click);
 			// 
 			// factorial
 			// 
@@ -315,6 +323,7 @@ namespace Calculator {
 			this->factorial->TabIndex = 36;
 			this->factorial->Text = L"!";
 			this->factorial->UseVisualStyleBackColor = false;
+			this->factorial->Click += gcnew System::EventHandler(this, &MyForm::factorial_Click);
 			// 
 			// percent
 			// 
@@ -382,6 +391,7 @@ namespace Calculator {
 			this->del->TabIndex = 41;
 			this->del->Text = L"←";
 			this->del->UseVisualStyleBackColor = false;
+			this->del->Click += gcnew System::EventHandler(this, &MyForm::del_Click);
 			// 
 			// one
 			// 
@@ -619,12 +629,25 @@ namespace Calculator {
 			this->button23->UseVisualStyleBackColor = false;
 			this->button23->Click += gcnew System::EventHandler(this, &MyForm::BtnNum_Click);
 			// 
+			// act
+			// 
+			this->act->AutoSize = true;
+			this->act->BackColor = System::Drawing::SystemColors::ActiveCaption;
+			this->act->Font = (gcnew System::Drawing::Font(L"Comic Sans MS", 20.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(204)));
+			this->act->ForeColor = System::Drawing::Color::Gray;
+			this->act->Location = System::Drawing::Point(15, 33);
+			this->act->Name = L"act";
+			this->act->Size = System::Drawing::Size(0, 38);
+			this->act->TabIndex = 51;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
 			this->ClientSize = System::Drawing::Size(294, 397);
+			this->Controls->Add(this->act);
 			this->Controls->Add(this->nine);
 			this->Controls->Add(this->button23);
 			this->Controls->Add(this->eight);
@@ -669,92 +692,138 @@ namespace Calculator {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
 	
 
-private: System::Void BtnNum_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	this->CalcPanel->ForeColor = Color::Black;
-	Button^ button = safe_cast<Button^>(sender);
-	if (this->CalcPanel->Text == "0" || this->CalcPanel->Text == "ERROR" || is_equal == true)
-	{
-		this->CalcPanel->Text = button->Text;
-		is_equal = false;
-	}
-	else
-		this->CalcPanel->Text += button->Text;
-}
-
-
-
-private: System::Void plus_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	math_action('+');
-}
-private: System::Void minus_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	math_action('-');
-}
-private: System::Void mult_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	math_action('*');
-}
-private: System::Void divide_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	math_action('/');
-}
-private: System::Void math_action(char action)
-{
-	this->first_num = System::Convert::ToDouble(this->CalcPanel->Text);
-	this->user_action = action;
-	this->CalcPanel->Text = "0";
-}
-private: System::Void equal_Click(System::Object^ sender, System::EventArgs^ e) 
-{
-	if (user_action == ' ')
-		return;
-	double second_num{ System::Convert::ToDouble(this->CalcPanel->Text) };
-	float  res{ this->first_num };
-	switch (this->user_action)
-	{
-	case '%': res = res * second_num / 100; break;
-	case '+': res += second_num; break;
-	case '-': res -= second_num; break;
-	case '*': res *= second_num; break;
-	case '/': 
-		if (second_num == 0)
+	private: System::Void BtnNum_Click(System::Object^ sender, System::EventArgs^ e) 
 		{
-			this->CalcPanel->ForeColor = Color::Red;
-			this->CalcPanel->Text = "ERROR"; break;
+			this->CalcPanel->ForeColor = Color::Black;
+			Button^ button = safe_cast<Button^>(sender);
+			if (this->CalcPanel->Text == "0" || this->CalcPanel->Text == "ERROR" || is_equal == true)
+			{
+				this->CalcPanel->Text = button->Text;
+				is_equal = false;
+			}
+			else
+				this->CalcPanel->Text += button->Text;
 		}
-		else
-			res /= second_num; break;
-	}
-	is_equal = true;
-	if(this->CalcPanel->Text != "ERROR")
-		this->CalcPanel->Text = System::Convert::ToString(res);
-}
+
+
+
+	private: System::Void plus_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			this->act->Text = "+";
+			math_action('+');
+		}
+	private: System::Void minus_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			this->act->Text = "-";
+			math_action('-');
+		}
+	private: System::Void mult_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			this->act->Text = "x";
+			math_action('*');
+		}
+	private: System::Void divide_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			this->act->Text = "/";
+			math_action('/');
+		}
+	private: System::Void percent_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->act->Text = "%";
+			math_action('%');
+		}
+	private: System::Void degree_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+			this->act->Text = "^";
+			math_action('^');
+		}
+	private: System::Void factorial_Click(System::Object^ sender, System::EventArgs^ e)
+		{
+		this->act->Text = "!";
+		math_action('!');
+		}
+	private: System::Void math_action(char action)
+		{
+			this->first_num = System::Convert::ToDouble(this->CalcPanel->Text);
+			this->user_action = action;
+			this->CalcPanel->Text = "0";
+		}
+	private: System::Void equal_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			this->act->Text = " ";
+			if (user_action == ' ')
+				return;
+			double second_num{ System::Convert::ToDouble(this->CalcPanel->Text) };
+			float  res{ this->first_num };
+			switch (this->user_action)
+			{
+			case '^': res = pow(res, second_num);
+			case '%': res = res * second_num / 100; break;
+			case '+': res += second_num; break;
+			case '-': res -= second_num; break;
+			case '*': res *= second_num; break;
+			case '/': 
+				if (second_num == 0)
+				{
+					this->CalcPanel->ForeColor = Color::Red;
+					this->CalcPanel->Text = "ERROR"; break;
+				}
+				else
+					res /= second_num; break;
+			case '!':
+				for (int i{ 1 }; i <= second_num; i++)
+				{
+					res *= i;
+				}
+			
+			}
+			is_equal = true;
+			if(this->CalcPanel->Text != "ERROR")
+				this->CalcPanel->Text = System::Convert::ToString(res);
+			
+		}
 	private: System::Void PlusMinus_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		this->CalcPanel->Text = System::Convert::ToString(System::Convert::ToDouble(this->CalcPanel->Text) * -1);
-	}
+		{
+			this->CalcPanel->Text = System::Convert::ToString(System::Convert::ToDouble(this->CalcPanel->Text) * -1);
+		}
 	private: System::Void clear_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		this->CalcPanel->Text = "0";
-		is_equal = false;
-	}
-	private: System::Void percent_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
-		math_action('%');
-	}
+		{
+			this->CalcPanel->Text = "0";
+			is_equal = false;
+		}
 	private: System::Void dot_Click(System::Object^ sender, System::EventArgs^ e) 
-	{
+		{
+			if (!this->CalcPanel->Text->Contains(","))
+				this->CalcPanel->Text +=  ",";
+		}
+	private: System::Void constP_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+		if (this->CalcPanel->Text == "0")
+			this->CalcPanel->Text = "3,14159265358979323";
+		else
+			this->CalcPanel->Text = System::Convert::ToString(System::Convert::ToDouble(this->CalcPanel->Text) * 3.14159265358979323);
+		}
+	private: System::Void constE_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
+			if (this->CalcPanel->Text == "0")
+				this->CalcPanel->Text = "2,71828182845904523";
+			else
+				this->CalcPanel->Text = System::Convert::ToString(System::Convert::ToDouble(this->CalcPanel->Text) * 2.71828182845904523);
+		}
+
+
+	private: System::Void del_Click(System::Object^ sender, System::EventArgs^ e) 
+		{
 		if (!this->CalcPanel->Text->Contains(","))
-			this->CalcPanel->Text +=  ",";
-	}
-		   //for test
+			this->CalcPanel->Text = System::Convert::ToString(trunc(System::Convert::ToDouble(this->CalcPanel->Text) / 10));
+		
+		}
 };
 	
 }
